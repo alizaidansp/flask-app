@@ -4,21 +4,21 @@ import os
 app = Flask(__name__)
 
 # Dynamically set database path based on environment
-# local_db_path = 'sqlite://///home/ali/all-dev/PHASE-2/AWS/flask_app/catalog.db'
-ec2_db_path = 'sqlite:////home/ubuntu/catalog_server/catalog.db'
+ec2_db_path = 'sqlite://///home/ali/all-dev/PHASE-2/AWS/flask_app/catalog.db'
+# ec2_db_path = 'sqlite:////home/ubuntu/catalog_server/catalog.db'
+# REMEMBER TO DO THE NEEDFUL BEFORE DEPLOYMENT!
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DB_PATH', ec2_db_path)
 print("find me... ")
 print(app.config['SQLALCHEMY_DATABASE_URI'])
 db = SQLAlchemy(app)
-
 class Products(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(200))
     price = db.Column(db.Float, nullable=False)
 
-@app.route('/products', methods=['GET'])
+@app.route('/api/v1/products', methods=['GET'])
 def get_products():
     products = Products.query.all()
     return jsonify([{
