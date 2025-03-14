@@ -1,12 +1,15 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
-
+import os
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///home/ali/all-dev/PHASE-2/AWS/flask_app/catalog.db'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/ubuntu/catalog_server/catalog.db'
+# Dynamically set database path based on environment
+# local_db_path = 'sqlite://///home/ali/all-dev/PHASE-2/AWS/flask_app/catalog.db'
+ec2_db_path = 'sqlite:////home/ubuntu/catalog_server/catalog.db'
 
-
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DB_PATH', ec2_db_path)
+print("find me... ")
+print(app.config['SQLALCHEMY_DATABASE_URI'])
 db = SQLAlchemy(app)
 
 class Products(db.Model):
