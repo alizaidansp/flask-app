@@ -2,9 +2,6 @@
 from flask import Flask, jsonify
 import os
 from extensions import db
-from routes.product_routes import product_bp
-from routes.auth_routes import auth_bp
-from routes.user_routes import user_bp
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 
@@ -28,8 +25,12 @@ def create_app():
     db.init_app(app)
     jwt = JWTManager(app)
 
-    print("find me... ")
-    print(app.config['SQLALCHEMY_DATABASE_URI'])
+    # print("find me... ")
+    # print(app.config['SQLALCHEMY_DATABASE_URI'])
+
+    from routes.product_routes import product_bp
+    from routes.auth_routes import auth_bp
+    from routes.user_routes import user_bp
 
  
     app.register_blueprint(product_bp, url_prefix='/api/v1')
