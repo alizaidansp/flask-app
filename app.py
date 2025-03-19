@@ -7,13 +7,10 @@ from flask_cors import CORS
 
 def create_app():
     app = Flask(__name__)
-    # Allow requests from your frontend (e.g., http://0.0.0.0:5173 for Svelte)
-    # CORS(app, origins=["http://0.0.0.0", "http://localhost:5173"])
-        # Dynamically allow any origin (for flexible production setups)
-    CORS(app, supports_credentials=True, origins=lambda origin: origin or "*")
+    CORS(app, resources={r"/api/*":{"origins":"*" }})
 
     # Dynamically set database path based on environment
-    # ec2_db_path = 'sqlite://///home/ali/all-dev/PHASE-2/AWS/3_catalog_project/flask_app/catalog.db' (local)
+    # ec2_db_path = 'sqlite://///home/ali/all-dev/PHASE-2/AWS/3_catalog_project/flask_app/catalog.db' #(local)
    
     ec2_db_path = 'sqlite:////home/ubuntu/catalog_server/catalog.db' #(prod)
     # REMEMBER TO DO THE NEEDFUL BEFORE DEPLOYMENT!
