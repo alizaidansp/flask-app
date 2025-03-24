@@ -12,7 +12,10 @@ def create_app():
     # Dynamically set database path based on environment
     # ec2_db_path = 'sqlite://///home/ali/all-dev/PHASE-2/AWS/3_catalog_project/flask_app/catalog.db' #(local)
    
-    ec2_db_path = 'sqlite:////home/ubuntu/catalog_server/catalog.db' #(prod)
+    # ec2_db_path = 'sqlite:////home/ubuntu/catalog_server/catalog.db' #(prod)
+
+    ec2_db_path = 'sqlite:////app/catalog.db' #(for containerized env)
+
     # REMEMBER TO DO THE NEEDFUL BEFORE DEPLOYMENT!
 
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DB_PATH', ec2_db_path)
