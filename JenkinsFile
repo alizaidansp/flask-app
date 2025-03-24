@@ -1,0 +1,97 @@
+
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_USER = 'zaidanali028'
+        IMAGE_NAME = 'zaidanali028/flask-app:latest'
+    }
+
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs() // Cleans the workspace before starting
+            }
+        }
+
+        stage('Clone Repository') {
+            steps {
+                script {
+                    echo "Cloning the repository..."
+                    sh """
+                        git clone https://github.com/alizaidansp/flask-app.git
+                        cd flask-app
+                        ls
+                    """
+                }
+            }
+        }
+
+        stage('Install Requirements') {
+            steps {
+                script {
+                    echo "Installing dependencies..."
+                    sh """
+                        cd flask-app
+                        python3 -m venv venv
+                        . venv/bin/activate
+                        pip install -r requirements.txt
+                    """
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    echo "Running tests..."
+                    sh """
+                        cd flask-app
+                        . venv/bin/activate
+                        pytest tests/
+                    """
+                }
+            }
+        }
+
+        stage('Login to DockerHub') {
+            steps {
+                script {
+                    echo "Logging in to DockerHub..."
+                    withCredentials([string(credentialsId: 'DOCKERHUB_TOKEN', variable: 'DOCKER_TOKEN')]) {
+                        sh """
+                            echo ${DOCKER_TOKEN} | docker login -u ${DOCKER_USER} --password-stdin
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    echo "Building and pushing Docker image..."
+                    sh """
+                        cd flask-app
+                        docker build -t ${IMAGE_NAME} .
+                        docker push ${IMAGE_NAME}
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo " Cleaning up workspace after execution..."
+            cleanWs() // Ensures cleanup after job execution
+        }
+        success {
+            echo "Build and deployment successful!"
+        }
+        failure {
+            echo "Build or tests failed. Check logs."
+        }
+    }
+}
+
